@@ -13,6 +13,44 @@
 
             const PRODUCTS_URL = 'https://acme-users-api-rev.herokuapp.com/api/products'
             const COMPANIES_URL = 'https://acme-users-api-rev.herokuapp.com/api/companies'
+            Promise.all([fetch(PRODUCTS_URL), fetch(COMPANIES_URL)])
+                .then(responses => Promise.all(responses.map(responses => responses.json())))
+                .then((result) => {
+                    const products = result[0];
+                    const companies = result[1];
+                })
+                
+            class App extends Component {
+                constructor() {
+                    super();
+                    this.state = {
+                        products: [],
+                        companies: [],
+                        page: window.location.hash.slice(1)
+                    };
+                }
+                componentDidMount() {
+                    if(!window.location.hash.slice(1)) {
+                        window.location.hash = "products"
+                    }
+                    window.addEventListener('hashchange', (ev) {
+                        const page = window.location.hash.slice(1);
+                        this.setState({page});
+                    })
+                    
+                }
+                render() {
+                    const {products, companies, page} = this.state;
+                    let currentView; 
+
+
+                }
+            }
+            const root = document.querySelector('#root');
+            render(createElement(App), root)
+                
+            
+                
 
             
             
