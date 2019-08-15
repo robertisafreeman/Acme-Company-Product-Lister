@@ -11,15 +11,22 @@
             const { render } = ReactDOM;
             const { createElement, Component } = React;
 
-            const PRODUCTS_URL = 'https://acme-users-api-rev.herokuapp.com/api/products'
-            const COMPANIES_URL = 'https://acme-users-api-rev.herokuapp.com/api/companies'
-            Promise.all([fetch(PRODUCTS_URL), fetch(COMPANIES_URL)])
-                .then(responses => Promise.all(responses.map(responses => responses.json())))
-                .then((result) => {
-                    const products = result[0];
-                    const companies = result[1];
-                })
-                
+            const Nav = ({products, companies, page}) => {
+                return createElement('div',
+                {className: 'nav'},
+                React.createElement('a', {href : '#products'}, `Products(${products.length})`),
+                React.createElement('a', {href : '#companies'}, `Companies(${companies.length})`))
+            }
+
+            const Products = ({products}) => {
+                const lis = products.map(product => createElement('li', {key:product.id},`${product.name} - ${product.description}`))
+                return React.createElement('ul', null, lis)
+            }
+            const Companies = ({companies}) => {
+                const lis = companies.map(company => createElement('li', {key: company.id}, company.name))
+                return React.createElement('ul', null, lis)
+            }
+
             class App extends Component {
                 constructor() {
                     super();
@@ -29,21 +36,38 @@
                         page: window.location.hash.slice(1)
                     };
                 }
+
                 componentDidMount() {
                     if(!window.location.hash.slice(1)) {
                         window.location.hash = "products"
                     }
-                    window.addEventListener('hashchange', (ev) {
+                    window.addEventListener('hashchange', (ev) => {
                         const page = window.location.hash.slice(1);
                         this.setState({page});
                     })
-                    
+                    const PRODUCTS_URL = 'https://acme-users-api-rev.herokuapp.com/api/products'
+                    const COMPANIES_URL = 'https://acme-users-api-rev.herokuapp.com/api/companies'
+                    Promise.all([fetch(PRODUCTS_URL), fetch(COMPANIES_URL)])
+                        .then(responses => Promise.all(responses.map(responses => responses.json())))
+                        .then((result) => {
+                            const products = result[0];
+                            const companies = result[1];
+                            this.setState({products, companies})
+                            console.log(products, companies)
+                        })
                 }
+
                 render() {
                     const {products, companies, page} = this.state;
-                    let currentView; 
-
-
+                    const nav = React.createElement(Nav, {products, companies});
+                    let currentView;
+                    if(page==='products') {
+                        currentView = createElement(Products, {products})
+                    }
+                    if(page==='companies') {
+                        currentView = createElement(Companies, {companies})
+                    }
+                    return createElement('div', null, 'React', nav, currentView)
                 }
             }
             const root = document.querySelector('#root');
