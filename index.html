@@ -3,6 +3,13 @@
             <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
             <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
             <script>src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js'</script>
+            <style>
+                .selected {
+                    background-color: salmon;
+                    margin: 1rem;
+                    border: solid black 1px;
+                }
+            </style>
     </head>
     <body>
         <div id="root">
@@ -14,8 +21,8 @@
             const Nav = ({products, companies, page}) => {
                 return createElement('div',
                 {className: 'nav'},
-                React.createElement('a', {href : '#products'}, `Products(${products.length})`),
-                React.createElement('a', {href : '#companies'}, `Companies(${companies.length})`))
+                React.createElement('a', {href : '#products', className: page === 'products' ? 'selected' : ''}, `Products(${products.length})`),
+                React.createElement('a', {href : '#companies', className: page === 'companies' ? 'selected' : ''}, `Companies(${companies.length})`))
             }
 
             const Products = ({products}) => {
@@ -59,7 +66,7 @@
 
                 render() {
                     const {products, companies, page} = this.state;
-                    const nav = React.createElement(Nav, {products, companies});
+                    const nav = React.createElement(Nav, {products, companies, page});
                     let currentView;
                     if(page==='products') {
                         currentView = createElement(Products, {products})
@@ -67,7 +74,7 @@
                     if(page==='companies') {
                         currentView = createElement(Companies, {companies})
                     }
-                    return createElement('div', null, 'React', nav, currentView)
+                    return createElement('div', null, 'Acme-Company-Product-Lister', nav, currentView)
                 }
             }
             const root = document.querySelector('#root');
